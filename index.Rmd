@@ -1,0 +1,80 @@
+---
+title       : Quick Visualization Tool
+subtitle    : A Tool for Reviewing 2013 US Household Income Level Data by Characteristic
+author      : Jason Ives
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Purpose
+
+This app provides users with an opportunity to browse US income data broken down by category.
+
+```{r plot1, echo = FALSE}
+incData <- read.csv("C:/Users/Jason/Documents/Data Science Specialization/Dev Data Products/Project/data/2013HHCharIncome.csv", check.names = FALSE, strip.white = TRUE, stringsAsFactors = FALSE)
+
+xLabels <- colnames(incData[5:(ncol(incData) - 2)])
+
+x <- as.numeric(incData[12,5:(ncol(incData) - 2)])
+
+par(mar = c(12.1, 5.1, 4.1, 2.1))
+barplot(x, las = 2, space = 0, ylim = c(0, 8000), names.arg = xLabels, xpd = FALSE, col = "lightyellow2", main = "Sample Plot")
+mtext("Household Income (US$)", 1, line = 10)
+mtext("Number of Households (1000s)", 2, line = 4)
+```
+
+---
+
+## Benefits
+
+This quick visualization capability allows users to:
+
+* Look for trends
+* Do quick comparisons across categories
+* Bring up data of particular interest to the user, and visualize it in a compelling way
+
+The method used to break down this data can easily be generalized and expanded upon to accomodate a broad range of data sets, providing a standard platform for quick data visualization and review.
+
+---
+
+## Sample Question
+
+Suppose we want to know how our household income of $83000/year compares with others in the work force.  Here we can see a sample of the raw data for this question...
+
+```{r dataRow, echo = TRUE}
+colLabels <- colnames(incData[5:(ncol(incData) - 2)])
+sampleDf <- as.data.frame(as.character(incData[28,]))
+colnames(sampleDf) <- "Sample Data"
+rownames(sampleDf) <- colnames(incData)
+head(sampleDf, 7)
+```
+
+---
+
+## Sample Question Plot
+
+Here is a sample plot of the same data.  We can see that our income is well above the mean, but there are also quite a few households making more than us.
+
+```{r plot2, echo = FALSE}
+xLabels <- colnames(incData[5:(ncol(incData) - 2)])
+
+plotData <- as.numeric(incData[28,5:(ncol(incData) - 2)])
+chcMean <- incData[28,ncol(incData) - 1]
+
+par(mar = c(12.1, 5.1, 4.1, 2.1))
+barplot(plotData, las = 2, space = 0, ylim = c(0, 8000), names.arg = xLabels, xpd = FALSE, col = "lightyellow2", main = "Age of householder - Under 65 years")
+par(new = TRUE)
+plot(x = 0, type = "n", xlim = c(5000,200000), ylim = c(0,8000), xaxt = 'n', yaxt = 'n', xlab = '', ylab = '', xpd = FALSE)
+mtext("Household Income (US$)", 1, line = 10)
+mtext("Number of Households (1000s)", 2, line = 4)
+abline(v = chcMean, col = "blue")                         
+text(chcMean, (8000 * .60), paste0("MEAN - $", as.character(chcMean)), pos = 4, col = "blue", srt = 90, cex = .90)
+abline(v = 83000, col = "red")
+text("83000", (8000 * .60), paste0("MARKER - $", as.character(83000)), pos = 4, col = "red", srt = 90, cex = .90)
+
+```
